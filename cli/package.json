@@ -1,0 +1,25 @@
+{
+  "name": "kenwood-contacts",
+  "version": "1.0.0",
+  "description": "Kenwood NX-5000 series contact assistant.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "kenwood",
+    "dmr",
+    "p25",
+    "nxdn",
+    "nx-5000",
+    "contacts"
+  ],
+  "author": "Rich Dunajewski <me@richdunajewski.com>",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^2.2.0",
+    "copy-paste": "^1.3.0",
+    "fast-csv": "^2.4.0",
+    "lodash": "^4.17.4"
+  }
+}
