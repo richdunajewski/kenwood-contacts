@@ -1,4 +1,9 @@
-const {app, BrowserWindow} = require('electron');
+const {app, BrowserWindow, ipcMain} = require('electron');
+const _ = require('lodash');
+const async = require('async');
+const csv = require('fast-csv');
+const ncp = require('copy-paste');
+const fs = require('fs-extra');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -27,6 +32,14 @@ function createWindow() {
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
         win = null
+    });
+
+    ipcMain.on('loadContacts', (event, arg) => {
+        console.log('loadContacts', arg);
+        loadContacts(arg, function (err, contacts) {
+            event.reply('contactsLoaded', contacts);
+            // event.reply('contactsLoaded', contacts.length);
+        });
     })
 }
 
@@ -51,3 +64,57 @@ app.on('activate', () => {
         createWindow()
     }
 });
+
+function loadContacts(filename, cb) {
+    let contacts = [];
+
+    const readStream = fs.createReadStream(filename);
+
+    readStream
+        .pipe(csv.parse({headers: true}))
+        .on('data', function (data) {
+            contacts.push(data);
+        })
+        .on('error', function (err) {
+            process.nextTick(cb, err);
+        })
+        .on('end', function () {
+            console.log('Loaded %s contacts', contacts.length);
+
+            //map properties
+            contacts = _.map(contacts, function (o) {
+                return {
+                    id: o.ID,
+                    callsign: o.Call,
+                    name: o.Name,
+                    lastTX: o['Last TX'],
+                    txCount: o['TX Count'],
+                };
+            });
+
+            const config = {
+                maxContacts: 1500,
+                sort: true
+            };
+
+            if (config.sort) {
+                contacts = _.reverse(_.sortBy(contacts, function (item) {
+                    return parseInt(item.txCount);
+                }));
+            }
+
+            contacts = _.take(contacts, config.maxContacts);
+
+            let copyString = 'DmrIndividualIdListId	DmrIndividualIdListIdName	DmrIndividualIdListIdMode	DmrIndividualIdListIndividualAlertTone	DmrIndividualIdListPagingAlertTone	DmrIndividualIdListIndividualAlertLed	DmrIndividualIdListPagingAlertLed';
+            _.each(contacts, function (contact) {
+                copyString += contact.id + '\t' + (contact.callsign + ' ' + contact.name).substring(0, 15) + '\tTransmitReceive\t255\t255\tCommon\tCommon\r\n';
+            });
+
+            console.log(copyString);
+            console.log('Copied contacts to clipboard. Paste into the Individual contact list in the Kenwood software to import.');
+
+            ncp.copy(copyString);
+
+            process.nextTick(cb, null, contacts);
+        });
+}

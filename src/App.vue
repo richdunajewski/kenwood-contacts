@@ -26,6 +26,8 @@
 </template>
 
 <script>
+    const {remote} = window.require('electron');
+
     export default {
         name: 'App',
 
@@ -36,6 +38,10 @@
                 version: '1.0.0'
             }
         }),
+
+        mounted(){
+            this.app.version = remote.app.getVersion();
+        }
     };
 </script>
 
