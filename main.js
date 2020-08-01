@@ -19,11 +19,11 @@ function createWindow() {
         }
     });
 
-    // win.removeMenu();
+    win.removeMenu();
 
     // and load the index.html of the app.
-    // win.loadFile('dist/index.html');
-    win.loadURL('http://localhost:8080');
+    win.loadFile('dist/index.html');
+    // win.loadURL('http://localhost:8080');
 
     // Open the DevTools.
     //win.webContents.openDevTools();
