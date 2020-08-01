@@ -6,7 +6,7 @@ const fs = require('fs');
 
 const config = {
     contactFile: 'mycontacts.csv',
-    maxContacts: 500,
+    maxContacts: 1000,
     sort: true
 };
 

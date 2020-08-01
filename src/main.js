@@ -3,8 +3,9 @@ import App from './App.vue'
 import vuetify from './plugins/vuetify'
 import router from './router'
 import VueLodash from 'vue-lodash'
+import lodash from 'lodash'
 
-Vue.use(VueLodash, {name: 'lodash'});
+Vue.use(VueLodash, {lodash: lodash});
 
 Vue.config.productionTip = false;
 
