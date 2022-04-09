@@ -19,7 +19,7 @@
     "fast-csv": "^4.0.2",
     "fs-extra": "^8.1.0",
     "lodash": "^4.17.19",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "socket.io-client": "^2.3.0",
     "vue": "^2.6.10",
     "vue-lodash": "^2.1.2",
